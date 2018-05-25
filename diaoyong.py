@@ -16,6 +16,8 @@ while True:
         xm.deln()
     elif user == '520':
         print(fz.mv())
+    elif user == '521':
+        print(fz.mn())
     elif user == '522':
         print(fz.tz())
     elif user == '525':
