@@ -14,22 +14,28 @@ class People:
     def tang(self):
         print('%s :begin裝傻……'% self.name)
 
+def bisha(item):
+    item.jump()
+    item.run()
+    item.zhiquan()
+def bisha2(item):
+    item.tang()
+    item.jump()
+    item.run()
+    item.zhiquan()
+
 chengguohan=People('稱國漢','2.52 Meter',252)
-chengguohan.jump()
+bisha(chengguohan)
 
 caotijing = People('草薙京','1.80 Meter',152)
-caotijing.run()
-
-buzhihuowu = People('不知火舞','1.78 Meter',102)
-buzhihuowu.zhiquan()
+bisha2(caotijing)
 
 bashengan = People('八神痷','1.82 Meter',156)
-bashengan.tang()
+bisha2(bashengan)
 
 dashe = People('大蛇','1.96 Meter',168)
-dashe.run()
-dashe.jump()
-dashe.zhiquan()
+bisha(dashe)
+
 '''
 chengguohan = People()
 chengguohan.name = '稱國漢'
