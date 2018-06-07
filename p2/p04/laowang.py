@@ -8,7 +8,7 @@ class People:
     def __str__(self):
         return self.name+'剩余血量为:'+str(self.hp)
 
-    def Loading(self,clip,bullet):  #安子弹 弹夹 子弹
+    def Loading(self,gun,clip,bullet):  #安子弹 弹夹 子弹
         clip.Save(bullet)  #枪保存子弹
 
     def SecuriltyClip(self,gun,clip):   #安弹夹 枪 弹夹
@@ -43,12 +43,6 @@ class Clip:
         else:
             return None
 
-class Bullet:
-    def __init__(self,killed):
-        self.killed = killed
-
-    def Hurt(self,enemy):  # 伤害 敌人
-        enemy.BllodDrop(self.killed)  #敌人掉血
 
 class Gun:
     def __init__(self):
@@ -60,6 +54,8 @@ class Gun:
         else:
             return '枪没有弹夹'
 
+    def Save(self,clip,bullet):
+        self.clip = clip
     def Connection(self,clip):
         if not self.clip :
             self.clip = clip
@@ -71,6 +67,12 @@ class Gun:
         else:
             print('没有子弹了，放了空枪……')
 
+class Bullet(Gun):
+    def __init__(self,killed):
+        self.killed = killed
+
+    def Hurt(self,enemy):  # 伤害 敌人
+        enemy.BllodDrop(self.killed)  #敌人掉血
 laowang = People('老王')
 
 clip = Clip(20)
@@ -80,14 +82,14 @@ print(clip)
 i = 0
 while i < 5:
     bullet = Bullet(5)
-    laowang.Loading(clip,bullet)
+    laowang.Loading(clip,bullet,clip)
     i+=1
 print(clip)
 
 gun = Gun()
 print(gun)
 
-laowang.Loading(gun,clip)
+laowang.Loading(gun,bullet,clip)
 print(gun)
 
 enemy = People('敌人')
