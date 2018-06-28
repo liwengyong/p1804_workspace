@@ -1,4 +1,4 @@
-import pygame,random
+import pygame,random,time
 
 class Base(object):
     def __init__(self,img_path,screen,x,y):
@@ -23,11 +23,6 @@ class Plane(Base):
         self.create_image()
         self.image_num = 0
         self.image_index = 0
-    def create_image(self):
-        self.bao_tu.append(pygame.image.load('./images/hero_blowup_n1.png'))
-        self.bao_tu.append(pygame.image.load('./images/hero_blowup_n2.png'))
-        self.bao_tu.append(pygame.image.load('./images/hero_blowup_n3.png'))
-        self.bao_tu.append(pygame.image.load('./images/hero_blowup_n4.png'))
     def bao(self):
         self.hit = True
     def peng(self):
@@ -40,6 +35,8 @@ class Plane(Base):
             if self.image_num > 3:
                 self.rect.x = 750
                 self.rect.y = 750
+                time.sleep(2)
+                exit()
     def display(self):
         self.screen.blit(self.plane, self.rect)#设置飞机
         # 显示子弹
@@ -63,6 +60,24 @@ class EnemyPlane(Plane):
     def __init__(self, img_path, screen):
         Plane.__init__(self,img_path,screen,0,0)
         self.flag = 'right'
+    def peng(self):
+        if self.hit == True :
+            self.screen.blit(self.bao_tu[self.image_num],self.rect)
+            self.image_index += 1
+            if self.image_index == 3 and self.image_num < 3:
+                self.image_index = 0
+                self.image_num += 1
+            while self.image_index > 3 :
+                selfimage_num = 0
+                break
+
+
+    def add_money(self,num):
+        self.num = num
+        for i in range(num):
+            enemy_hero = EnemyPlane(self.sceen)
+
+
 
     def move(self):
         if self.flag == 'right':
@@ -76,17 +91,29 @@ class EnemyPlane(Plane):
         elif self.rect.x <= 0 :
             self.flag = 'right'
             self.rect.y += 60
+    def create_image(self):
+        self.bao_tu.append(pygame.image.load('./images/enemy1_down1.png'))
+        self.bao_tu.append(pygame.image.load('./images/enemy1_down2.png'))
+        self.bao_tu.append(pygame.image.load('./images/enemy1_down3.png'))
+        self.bao_tu.append(pygame.image.load('./images/enemy1_down4.png'))
 
     def fire(self):
         self.bullet_list.append(EnemyBullet('./images/bullet1.png', self.screen,self.rect.x,self.rect.y))
+        self.bullet_list.append(EnemyBullet('./images/bullet1.png', self.screen,self.rect.x+80,self.rect.y))
 
 class HeroPlane(Plane):
     '''这是飞机的抽象类'''
     def __init__(self, img_path, screen):
         Plane.__init__(self,img_path,screen,(400-100)/2,350)
+    def create_image(self):
+        self.bao_tu.append(pygame.image.load('./images/hero_blowup_n1.png'))
+        self.bao_tu.append(pygame.image.load('./images/hero_blowup_n2.png'))
+        self.bao_tu.append(pygame.image.load('./images/hero_blowup_n3.png'))
+        self.bao_tu.append(pygame.image.load('./images/hero_blowup_n4.png'))
 
     def fire(self):
         self.bullet_list.append(Bullet('./images/bullet.png', self.screen,self.rect.x,self.rect.y))
+        self.bullet_list.append(Bullet('./images/bullet.png', self.screen,self.rect.x+80,self.rect.y))
 
 class Bullet(BaseBullet):
     '''这是 子弹 的抽象类'''
@@ -119,6 +146,15 @@ class EnemyBullet(BaseBullet):
             return True  #表示子弹飞出了屏幕
         else:
             return False
+
+def jihui(hero,enemy_hero):
+    for i in enemy_hero.bullet_list:
+        if (i.x >= hero.rect.x and i.x <= hero.rect.x + 100) and (i.y >= hero.rect.y and i.y <= hero.rect.y+124):
+            hero.bao()
+def djihui(hero,enemy_hero):
+    for i in hero.bullet_list:
+        if (i.x <= enemy_hero.rect.x and i.x >= enemy_hero.rect.x - 100) and (i.y <= enemy_hero.rect.y and i.y >= enemy_hero.rect.y-124):
+            enemy_hero.bao()
 
 def key_control(hero, move_step):
     # 游戏事件的监听 控制
@@ -155,8 +191,8 @@ def key_control(hero, move_step):
     if keys_pressed[pygame.K_DOWN] or keys_pressed[pygame.K_s]:
         if hero.rect.y < 500 - hero.rect.height:
             hero.rect.y += move_step
-    if keys_pressed[pygame.K_SPACE]:
-        hero.fire()
+    #if keys_pressed[pygame.K_SPACE]:
+    #    hero.fire()
     if keys_pressed[pygame.K_b]:
         hero.create_image()
         hero.bao()
@@ -174,22 +210,39 @@ def main():
     # 初始化飞机
     hero = HeroPlane('./images/hero1.png', screen)
     enemy_hero = EnemyPlane('./images/enemy1.png',screen)
-
     clock = pygame.time.Clock() #获得游戏时钟 控制器
 
     move_step = 10 # 移动的步长值
+    if enemy_hero.y > 300 or enemy_hero.peng():
+            enemy_hero.rect.x = 0
+            enemy_hero.rect.y = 0
+
+
+    if enemy_hero.rect.y > 300 or enemy_hero.peng():
+        enemy_hero.add_enemy()
+        enemy_hero = EnemyPlane('./images/enemy1.png',screen)
+        enemy_hero.plane = pygame.image.load(enemy_hero.img_path)#飞机图片
+        enemy_hero.screen.blit(enemy_hero.bao_tu[enemy_hero.image_num],enemy_hero.rect)
+        Plane.__init__(enemy_hero,img_path,screen,0,0)
+        enemy_hero.display()
+        enemy_hero.move()
+        enemy_hero.fire()
 
     while True:
         # 把图片 加载 到 游戏窗口上
         screen.blit(background, (0,0))
         hero.display()
         hero.peng()
+        enemy_hero.peng()
         enemy_hero.move()
         enemy_hero.display()
+        #jihui(hero,enemy_hero)
+        djihui(hero,enemy_hero)
         if random.randint(1,52) == 5:
             enemy_hero.fire()
 
         key_control(hero, move_step)
+
         #if hero.rect.x <= 0:
         #    hero.rect.x =400
         #elif hero.rect.y <= 0:

@@ -40,6 +40,7 @@ class Plane(Base):
             if self.image_num > 3:
                 self.rect.x = 750
                 self.rect.y = 750
+                exit()
     def display(self):
         self.screen.blit(self.plane, self.rect)#设置飞机
         # 显示子弹
@@ -120,6 +121,11 @@ class EnemyBullet(BaseBullet):
         else:
             return False
 
+def jihui(hero,enemy_hero):
+    for i in enemy_hero.bullet_list:
+        if (i.x >= hero.rect.x and i.x <= hero.rect.x + 100) and (i.y >= hero.rect.y and i.y <= hero.rect.y+124):
+            hero.bao()
+
 def key_control(hero, move_step):
     # 游戏事件的监听 控制
     for event in pygame.event.get():
@@ -186,6 +192,7 @@ def main():
         hero.peng()
         enemy_hero.move()
         enemy_hero.display()
+        jihui(hero,enemy_hero)
         if random.randint(1,52) == 5:
             enemy_hero.fire()
 

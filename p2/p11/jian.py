@@ -40,6 +40,7 @@ class Plane(Base):
             if self.image_num > 3:
                 self.rect.x = 750
                 self.rect.y = 750
+                exit()
     def display(self):
         self.screen.blit(self.plane, self.rect)#设置飞机
         # 显示子弹
@@ -79,6 +80,7 @@ class EnemyPlane(Plane):
 
     def fire(self):
         self.bullet_list.append(EnemyBullet('./images/bullet1.png', self.screen,self.rect.x,self.rect.y))
+        self.bullet_list.append(EnemyBullet('./images/bullet1.png', self.screen,self.rect.x+80,self.rect.y))
 
 class HeroPlane(Plane):
     '''这是飞机的抽象类'''
@@ -87,6 +89,7 @@ class HeroPlane(Plane):
 
     def fire(self):
         self.bullet_list.append(Bullet('./images/bullet.png', self.screen,self.rect.x,self.rect.y))
+        self.bullet_list.append(Bullet('./images/bullet.png', self.screen,self.rect.x+80,self.rect.y))
 
 class Bullet(BaseBullet):
     '''这是 子弹 的抽象类'''
@@ -119,6 +122,15 @@ class EnemyBullet(BaseBullet):
             return True  #表示子弹飞出了屏幕
         else:
             return False
+
+def jihui(hero,enemy_hero):
+    for i in enemy_hero.bullet_list:
+        if (i.x >= hero.rect.x and i.x <= hero.rect.x + 100) and (i.y >= hero.rect.y and i.y <= hero.rect.y+124):
+            hero.bao()
+def djihui(hero,enemy_hero):
+    for i in hero.bullet_list:
+       if (i.x <= enemy_hero.rect.x and i.x >= enemy_hero.rect.x - 100) and (i.y <= enemy_hero.rect.y and i.y >= enemy_hero.rect.y-124):
+            enemy_hero.bao()
 
 def key_control(hero, move_step):
     # 游戏事件的监听 控制
@@ -155,8 +167,8 @@ def key_control(hero, move_step):
     if keys_pressed[pygame.K_DOWN] or keys_pressed[pygame.K_s]:
         if hero.rect.y < 500 - hero.rect.height:
             hero.rect.y += move_step
-    if keys_pressed[pygame.K_SPACE]:
-        hero.fire()
+    #if keys_pressed[pygame.K_SPACE]:
+    #    hero.fire()
     if keys_pressed[pygame.K_b]:
         hero.create_image()
         hero.bao()
@@ -184,8 +196,11 @@ def main():
         screen.blit(background, (0,0))
         hero.display()
         hero.peng()
+        enemy_hero.peng()
         enemy_hero.move()
         enemy_hero.display()
+        jihui(hero,enemy_hero)
+        djihui(hero,enemy_hero)
         if random.randint(1,52) == 5:
             enemy_hero.fire()
 
