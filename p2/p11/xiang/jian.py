@@ -18,7 +18,6 @@ class Plane(Base):
         # 列表保存发出的子弹
         self.bullet_list = []
         self.bao_tu = []
-        self.baotu = []
 
         self.hit = False
         self.create_image()
@@ -39,9 +38,9 @@ class Plane(Base):
                 self.image_num += 1
                 self.image_index = 0
             if self.image_num > 3:
-                self.rect.x = 0
-                self.rect.y = 0
-                self.image_num = 0
+                self.rect.x = 750
+                self.rect.y = 750
+                exit()
     def display(self):
         self.screen.blit(self.plane, self.rect)#设置飞机
         # 显示子弹
@@ -66,21 +65,10 @@ class EnemyPlane(Plane):
         Plane.__init__(self,img_path,screen,0,0)
         self.flag = 'right'
     def create_image(self):
-        self.baotu.append(pygame.image.load('./images/enemy1_down1.png'))
-        self.baotu.append(pygame.image.load('./images/enemy1_down2.png'))
-        self.baotu.append(pygame.image.load('./images/enemy1_down3.png'))
-        self.baotu.append(pygame.image.load('./images/enemy1_down4.png'))
-    def peng(self):
-        if self.hit == True:
-            self.screen.blit(self.baotu[self.image_num],self.rect)
-            self.image_index += 1
-            if self.image_index == 10:
-                self.image_num += 1
-                self.image_index = 0
-            if self.image_num > 3:
-                self.rect.x = 0
-                self.rect.y = 0
-                self.image_num = 0
+        self.bao_tu.append(pygame.image.load('./images/enemy1_down1.png'))
+        self.bao_tu.append(pygame.image.load('./images/enemy1_down2.png'))
+        self.bao_tu.append(pygame.image.load('./images/enemy1_down3.png'))
+        self.bao_tu.append(pygame.image.load('./images/enemy1_down4.png'))
 
 
     def move(self):
@@ -179,38 +167,4 @@ def key_control(hero, move_step):
         hero.bao()
         hero.peng()
 
-def main():
-    # 创建游戏窗口
-    screen = pygame.display.set_mode((400,500),0,32)
 
-    # 把本地文件夹的图片，获取到 代码中
-    background = pygame.image.load('./images/background.png')
-
-    # 初始化飞机
-    hero = HeroPlane('./images/hero1.png', screen)
-    enemy_hero = EnemyPlane('./images/enemy1.png',screen)
-
-    clock = pygame.time.Clock() #获得游戏时钟 控制器
-
-    move_step = 10 # 移动的步长值
-
-    while True:
-        # 把图片 加载 到 游戏窗口上
-        screen.blit(background, (0,0))
-        hero.display()
-        hero.peng()
-        enemy_hero.peng()
-        enemy_hero.move()
-        enemy_hero.display()
-        jihui(hero,enemy_hero)
-        djihui(hero,enemy_hero)
-        if random.randint(1,52) == 5:
-            enemy_hero.fire()
-
-        key_control(hero, move_step)
-        pygame.display.update()
-        clock.tick(60) # 让游戏时钟，1/60秒运行一次
-
-
-if __name__ == '__main__':
-    main()
